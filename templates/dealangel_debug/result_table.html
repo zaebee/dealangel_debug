@@ -1,0 +1,32 @@
+{% load dealangel_debug_tags i18n %}
+
+{% spaceless %}
+
+<div class="container-fluid">
+
+  <div class="row-fluid">
+    <div class="span10">
+      <!-- tabbar will be here -->
+      <ul class="nav nav-tabs" id="tabbar" data-spy="affix" data-offset="270">
+      </ul>
+
+      <div class="tab-content" id="tab_content">
+        <div class="tab-pane active" id="hotels"></div>
+        <div class="tab-pane" id="raw-json-hotels">
+            <pre class="span12" id="json-code">#json all hotels here</pre>
+        </div>
+
+        <!--main tabs will be here -->
+      </div>
+    </div>
+
+    <div data-spy="affix" data-offset-top="270" class="span2 sidebar">
+      {% include 'dealangel_debug/sidebar.html' %}
+    </div>
+  </div>
+
+</div>
+
+{% include 'dealangel_debug/_js_templates.html' %}
+
+{% endspaceless %}

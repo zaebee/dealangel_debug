@@ -1,0 +1,13 @@
+.venv
+settings_local.py
+triphack.db
+*.pyc
+*.pyo
+.gitmodules
+*~
+*.mo
+media/upload
+log
+*.log
+*.swp
+../*

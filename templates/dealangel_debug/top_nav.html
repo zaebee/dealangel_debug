@@ -1,0 +1,30 @@
+{% load i18n %}
+<div class="navbar">
+  <div class="navbar-inner">
+    <div style="width: auto;" class="container">
+      <a href="/" class="brand">{% trans 'DealAngel api testing' %}</a>
+      <ul class="nav">
+        <li class="divider-vertical"></li>
+        <li class="">
+        <a href="/api_debug/">{% trans 'Main' %}</a>
+        </li>
+        
+        <li class="">
+        <a rel="popover" data-placement="bottom" id="show-settings" href="#">{% trans 'Settings' %}</a>
+        </li>
+        
+      </ul>
+
+      <ul class="nav pull-right">
+        <li class="dropdown">
+          <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+            <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a>logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div><!-- /navbar-inner -->
+</div>

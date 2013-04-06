@@ -1,0 +1,68 @@
+{% load i18n dealangel_debug_tags %}
+{% spaceless %}
+
+<fieldset id="extend_search_form" class="well">
+  <div class="row">
+
+    <div class="span5">
+      <span class="help-inline">{% trans 'Destination' %}&nbsp;</span>
+      <input placeholder="{% trans 'Enter a destination id' %}" value="Los_Angeles" class="input span4" type="text" id="dest_id" name="dest_id">&nbsp;
+    </div>
+
+    <div class="span7 form-inline">
+      <div id="alert" style="display:none;">
+        <div class="alert alert-error">
+          <a data-dismiss="alert" class="close">×</a>
+          <strong>Oh snap!</strong>
+        </div>
+      </div>
+
+      <span class="help-inline">{% trans 'Checkin date' %}</span>
+      <div class="input-append date help-inline">
+        <input id="checkin_date" name="checkin_date" value="{% now 'Y-m-d' %}" class="input-small date" size="16" type="date" placeholder="{% trans "YYYY-MM-DD" %}">
+        <span id="show_cal_from" data-date="{% now "Y-m-d" %}" class="add-on"><i class="icon-th"></i></span>
+      </div>&nbsp;&nbsp;&nbsp;
+
+      <span class="help-inline">{% trans 'Checkout date' %}</span>
+      <div class="input-append date help-inline">
+        <input id="checkout_date" name="checkout_date" value="{% after_tomorrow %}" class="input-small date" size="16" type="date" placeholder="{% trans "YYYY-MM-DD" %}">
+        <span id="show_cal_to" data-date="{% after_tomorrow %}" class="add-on"><i class="icon-th"></i></span>
+      </div>
+    </div>
+
+    <div class="span3">
+      <span class="help-inline">{% trans 'Rooms' %}</span>
+      <div class="input-append input-prepend date help-inline">
+        <span class="add-on"><a class="btn btn-mini num_minus">-</a></span>
+        <input id="num_rooms" name="num_rooms" value="1" class="span1" size="16" type="text">
+        <span class="add-on"><a class="btn btn-mini num_plus">+</a></span>
+      </div>&nbsp;&nbsp;&nbsp;
+    </div>
+  </div>
+
+  <div class="row room_1">
+    <h4 class="span2">Room1</h4>
+    <div class="span3">
+      <span class="help-inline">{% trans 'Adults' %}</span>
+      <div class="input-append input-prepend date help-inline">
+        <span class="add-on"><a class="btn btn-mini num_minus">-</a></span>
+        <input id="num_adults_1" name="num_adults_1" value="2" class="span1" size="16" type="text">
+        <span class="add-on"><a class="btn btn-mini num_plus">+</a></span>
+      </div>&nbsp;&nbsp;&nbsp;
+    </div>
+
+    <div class="span3">
+      <span class="help-inline">{% trans 'Children' %}</span>
+      <div class="input-append input-prepend date help-inline">
+        <span class="add-on"><a class="btn btn-mini num_minus">-</a></span>
+        <input data-room-id="1" id="num_children_1" name="num_children_1" value="0" class="span1" size="16" type="text">
+        <span class="add-on"><a class="btn btn-mini num_plus">+</a></span>
+      </div>&nbsp;&nbsp;&nbsp;
+    </div>
+    <div class="span6" id="child_ages_1">
+    </div>
+  </div>
+
+</fieldset>
+
+{% endspaceless %}

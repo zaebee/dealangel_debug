@@ -1,0 +1,188 @@
+{% load dealangel_debug_tags %}
+{% spaceless %}
+{% verbatim %}
+
+<script type="text/x-handlebars-template" id="orderFormTemplate">
+  <div data-spy="affix" data-offset-top="270">
+    <pre class="pre-scrollable span12" id="json-request-{{hotel.hotel_id}}">
+      <a class="btn show_booking_data_request">show data request</a>
+      <a class="btn show_booking_data_response">show data response</a>
+    </pre>
+  </div>
+  <hr>
+
+  <div class="row-fluid">
+    <div class="hotel_img span3">
+        {{#if hotel.main_image}}
+        <img class="img-rounded" src="{{hotel.main_image.url}}" >
+          <span class="badge badge-inverse">{{hotel.main_image.src}}</span>
+        {{else}}
+          <img class="img-rounded empty" />
+          <span class="badge badge-important">empty</span>
+        {{/if}}
+    </div>
+
+    <div class="span9">
+      <h3><a class="hotel_detail" href="#">{{hotel.name}}</a></h3>
+      <span class="title-address">{{hotel.address}}</span><br>
+      <div class="rating">
+        Rating: <b>({{hotel.ratings.overall_rating}})</b>
+      </div>
+      <div class="review">Reviews: <b>({{hotel.reviews}})</b></div>
+      <div class="stars">Stars: <b>({{hotel.stars}})</b></div>
+      <div class="dealrank">Dealrank: <b>({{hotel.dealrank}})</b></div>
+    </div>
+  </div>
+
+  <h3>Room - {{ room.roomDesc }}</h3>
+
+  <form class="form form-horizontal" id="booking-form" method="POST" action=".">
+  
+    <input type="hidden" value="{{room.supplierType}}" name="supplier_type">
+    <input type="hidden" value="{{room.rateKey}}" name="rate_key">
+    <input type="hidden" value="{{room.roomTypeCode}}" name="room_type_code">
+    <input type="hidden" value="{{room.rateCode}}" name="rate_code">
+    <input type="hidden" value="{{room.totalRate}}" name="chargeable_rate">
+    <input type="hidden" value="{{room.hotelId}}" name="hotel_id">
+
+    <input type="hidden" value="{{hotel.checkin}}" name="checkin">
+    <input type="hidden" value="{{hotel.checkout}}" name="checkout">
+
+    {{#each room_ids}}
+      <fieldset class="well room_{{this}}">
+        <legend>Room details {{this}}</legend>
+
+        <div class="row-fluid">
+          <div class="span2">
+            <span class="help-inline">Adults</span>
+            <div class="input-prepend input-append">
+              <span class="add-on"><a class="btn btn-mini num_minus">-</a></span>
+              <input class="span2" id="room_{{this}}_num_adults" name="room_{{this}}_num_adults" value=2 size="16" type="text">
+              <span class="add-on"><a class="btn btn-mini num_plus">+</a></span>
+            </div>
+          </div>
+
+          <div class="span2">
+            <span class="help-inline">Children</span>
+            <div class="input-prepend input-append">
+              <span class="add-on"><a class="btn btn-mini num_minus">-</a></span>
+              <input class="input span2" value=0 type="text" id="room_{{this}}_num_children" size=16 name="room_{{this}}_num_children">
+              <span class="add-on"><a class="btn btn-mini num_plus">+</a></span>
+            </div>
+          </div>
+
+          <div class="span6" id="room_{{this}}_child_ages">
+          </div>
+        </div>
+
+        <div class="row-fluid">
+          <div class="span3">
+            <span class="help-inline">firstname</span>
+            <input class="span12" id="room_{{this}}_first_name" name="room_{{this}}_first_name" value="Gordon" type="text">
+          </div>
+          <div class="span3">
+            <span class="help-inline">Lastname</span>
+            <input class="span12" id="room_{{this}}_last_name" name="room_{{this}}_last_name" value="Freeman" type="text">
+          </div>
+        </div>
+
+      </fieldset>
+    {{/each}}
+
+    <fieldset class="well ">
+      <legend>Personal info</legend>
+      <div class="row-fluid">
+        <div class="span5">
+          <span class="span4 help-inline">First name</span>
+          <input class="input span8"placeholder="enter your first name"  type="text" id="user_first_name" name="first_name" value="Gordon">
+        </div>
+
+        <div class="span5">
+          <span class="span4 help-inline">Last name</span>
+          <input class="input span8" placeholder="enter your last name" type="text" id="user_last_name" name="last_name" value="Freeman">
+        </div>
+      </div>
+
+      <div class="row-fluid">
+        <div class="span5">
+          <span class="span4 help-inline">Email</span>
+          <input class="input span8" placeholder="enter the email" type="text" id="user_email" name="email" value="da-admin@dealangel.com">
+        </div>
+
+        <div class="span5">
+          <span class="span4 help-inline">Phone</span>
+          <input class="input span8" placeholder="enter your phone number" type="text" id="user_home_phone" name="home_phone" value="89211234567">
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="well">
+      <legend>Address</legend>
+
+      <div class="row-fluid">
+        <div class="span3">
+          <span class="help-inline">Address</span>
+          <input class="input span6" placeholder="enter the address" type="text" id="user_address" name="address1" value="Sunset beach, 12">
+        </div>
+
+        <div class="span3">
+          <span class="help-inline">City</span>
+          <input class="input span6" placeholder="enter your city" type="text" id="user_city" name="city" value="Seatle">
+        </div>
+
+        <div class="span3">
+          <span class="help-inline">Postal code</span>
+          <input class="input span6" placeholder="enter the postal code" type="text" id="user_postal_code" name="postal_code" value="34834">
+        </div>
+
+        <div class="span1">
+          <input class="input span6" placeholder="US" type="text" id="user_country_code" name="country_code" value="US">
+        </div>
+
+        <div class="span1">
+          <input class="input span8" placeholder="WA" type="text" id="user_state_province_code" name="state_province_code" value="WA">
+        </div>
+      </div>
+
+    </fieldset>
+
+    <fieldset class="well">
+      <legend>Credit card</legend>
+
+      <div class="row-fluid">
+        <div class="span4">
+          <span class="help-inline">Card number</span>
+          <input class="input span8" placeholder="format: 1234-5567-2356-5435" type="text" id="card_number" name="credit_card_number" value="5401-9999-9999-9999">
+        </div>
+
+        <div class="span3">
+          <span class="help-inline">Expiration date</span>
+          <input class="input span2" placeholder="09" type="text" id="card_expiration_month" name="credit_card_expiration_month" value="11">/
+          <input class="input span3" placeholder="2014" type="text" id="card_expiration_year" name="credit_card_expiration_year" value="2012">
+        </div>
+
+        <div class="span2">
+          <span class="help-inline">Card type</span>
+          <input class="input span4" placeholder="CA" type="text" id="card_type" name="credit_card_type" value="CA">
+        </div>
+
+        <div class="span2">
+          <span class="help-inline">Card identifier</span>
+          <input class="input span4" placeholder="123" type="text" id="card_identifier" name="credit_card_identifier" value="123">
+        </div>
+      </div>
+
+    </fieldset>
+
+    <div class="form-actions">
+      <button id="confirm_order" class="btn btn-primary pull-right disabled" href="#">
+        Next
+        <i class="icon-arrow-right icon-white"></i>
+      </button>
+    </div>
+
+  </form>
+</script>
+
+{% endverbatim %}
+{% endspaceless %}

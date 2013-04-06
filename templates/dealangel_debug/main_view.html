@@ -1,0 +1,30 @@
+{% extends 'dealangel_debug/base.html' %}
+{% load i18n %}
+
+{% block content %}
+
+<div class="container-fluid">
+  <div class="row">
+    <form id="dealangel_form" class="form form-inline">
+
+      {% include 'dealangel_debug/simple_search_form.html' %}
+
+      <div class="form-actions">
+        <button id="search_button" class="btn btn-primary" href="#">
+          <i class="icon-search icon-white"></i>
+          {% trans 'Search' %}
+        </button>
+        <span>&nbsp;</span>
+        <button id="clear_button" class="btn" href="#">
+          <i class="icon-refresh"></i>
+          {% trans 'Clear' %}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+{% include 'dealangel_debug/result_table.html' %}
+
+{% endblock %}

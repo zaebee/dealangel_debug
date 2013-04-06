@@ -1,0 +1,15 @@
+{% load i18n %}
+{% if messages %}
+{% endif %}
+  <script>
+    setTimeout( '$(".messages").fadeOut("slow")', 4000 );
+  </script>
+  <div class="messages">
+    {% for message in messages %}
+    <div class="alert {% if message.extra_tags %}{{ message.extra_tags }}{% else %}alert-success{% endif %}">
+        <a data-dismiss="alert" class="close">×</a>
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+

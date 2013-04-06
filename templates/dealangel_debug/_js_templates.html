@@ -1,0 +1,351 @@
+{% load dealangel_debug_tags %}
+{% spaceless %}
+
+{% verbatim %}
+
+  <script type="text/x-handlebars-template" id="hotelCardTemplate">
+    <li class="well span3 {{mapping_class}} {{#eachkeys min_rates}} {{key}}-mapping{{/eachkeys}}" id="{{hotel_id}}">
+      <div class="hotel_img">
+          {{#if main_image}}
+            <img class="img-rounded lazy" data-original="{{main_image.url}}" >
+            <span class="badge badge-inverse">{{main_image.src}}</span>
+          {{else}}
+            <img class="img-rounded empty" />
+            <span class="badge badge-important">empty</span>
+          {{/if}}
+      </div>
+      <h4><a class="hotel_detail show_hotel_detail" href="#">{{name}}</a></h4>
+
+      <div class="row-fluid">
+        <div class="rating span8">
+          Rating: <b>({{rating}})</b><br>
+          Reviews: <b>({{reviews}})</b><br>
+          Stars: <b>({{stars}})</b><br>
+        </div>
+        <div class="span4">
+          <a rel="popover" data-placement="right" class="btn-mini btn show_hotel_json">show source</a>
+        </div>
+      </div>
+
+      <div class="row-fluid">
+        <div class="dealrank span8">
+          Dealrank: <b>({{dealrank}})</b><br>
+          Min rate: <b>({{min_rate}})</b><br>
+        </div>
+        <div class="span4">
+          <a class="btn btn-mini show_hotel_detail">show detail</a>
+        </div>
+      </div>
+
+      <hr>
+      <div class="row-fluid">
+        <div class="min_prices span12">
+          <h5>Min prices</h5>
+            {{#eachkeys min_rates }}
+              <span class="label label-info">{{key}} = ${{value}}</span>&nbsp;
+            {{/ eachkeys}}
+      </div>
+    </li>
+  </script>
+
+
+  <script type="text/x-handlebars-template" id="tabContentTemplate">
+    <div class="row-fluid">
+      <div class="span12">
+        <pre class="pre-scrollable" id="json-code-{{hotel_id}}">
+          <a class="btn show_hotel_detail_json">show json source</a>
+        </pre>
+      </div>
+    </div>
+    <hr>
+    <div class="row-fluid">
+      <div class="hotel_img span3">
+          {{#if main_image}}
+            <img class="img-rounded" src="{{main_image.url}}" >
+            <span class="badge badge-inverse">{{main_image.src}}</span>
+          {{else}}
+            <img class="img-rounded empty" />
+            <span class="badge badge-important">empty</span>
+          {{/if}}
+      </div>
+
+      <div class="span9">
+        <h3><a class="hotel_detail" href="#">{{name}}</a></h3>
+        <span class="title-address">{{address}}</span><br>
+        <div class="rating">
+          Rating: <b>({{ratings.overall_rating}})</b>
+        </div>
+        <div class="review">Reviews: <b>({{reviews}})</b></div>
+        <div class="stars">Stars: <b>({{stars}})</b></div>
+        <div class="dealrank">Dealrank: <b>({{dealrank}})</b></div>
+
+        <h4>Rates</h4>
+        <div class="accordion" id="accordion-prices-{{hotel_id}}">
+        {{#eachkeys rates}}
+          <div class="accordion-group">
+
+            <div class="accordion-heading">
+              <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion-prices-{{../hotel_id}}" href="#prices-{{key}}-{{../hotel_id}}">
+                {{key}} <span class="pull-right">Min rate: <b>{{minRate ../min_rates ../duration key}}</b></span>
+              </a>
+            </div>
+
+            <div id="prices-{{key}}-{{../hotel_id}}" class="accordion-body collapse">
+              <div class="accordion-inner">
+
+                {{#if_eq key compare='hc'}}
+                <table class="table table-stripped table-condensed table-hover">
+                <thead>
+                  <tr>
+                    <th>Provider</th>
+                    <th>Room</th>
+                    <th>Price</th>
+                    <th>Tax</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                  {{#each value}}
+                    <tr>
+                      <td>{{provider}}</td>
+                      <td>{{room}}</td>
+                      <td class="price">{{converted_price}}&nbsp;{{currency}}</td>
+                      <td>{{converted_taxes}}&nbsp;{{currency}}</td>
+                      <td>{{hcPrice this 'converted_price' 'converted_taxes'}}&nbsp;{{currency}}</td>
+                    </tr>
+                  {{/each}}
+                </table>
+                {{/if_eq}}
+
+                {{#if_eq key compare='ean'}}
+                <table class="table table-stripped table-condensed table-hover">
+                <thead>
+                  <tr>
+                    <th>Room type</th>
+                    <th>Deposit required</th>
+                    <th>Non refundable</th>
+                    <th>Immediate charge required</th>
+                    <th>Nightly rate</th>
+                    <th>Surcharge</th>
+                    <th>Total</th>
+                    <th>Book</th>
+                  </tr>
+                </thead>
+                {{#if value.HotelRoomAvailabilityResponse.HotelRoomResponse.[1]}}
+                  {{#each value.HotelRoomAvailabilityResponse.HotelRoomResponse}}
+                    <tr>
+                      <td>{{roomTypeDescription}}</td>
+                      <td>{{#if depositRequired}}<i class="icon-ok">+</i>{{else}}<i class="icon-minus">-</i>{{/if}}</td>
+                      <td>{{#if nonRefundable}}<i class="icon-ok">+</i>{{else}}<i class="icon-minus">-</i>{{/if}}</td>
+                      <td>{{#if immediateChargeRequired}}<i class="icon-ok">+</i>{{else}}<i class="icon-minus">-</i>{{/if}}</td>
+                      <td class="price">{{eanPrice RateInfos.RateInfo.ChargeableRateInfo '@nightlyRateTotal' '@currencyCode'}}</td>
+                      <td>{{eanPrice RateInfos.RateInfo.ChargeableRateInfo '@surchargeTotal' '@currencyCode'}}</td>
+                      <td>{{eanPrice RateInfos.RateInfo.ChargeableRateInfo '@total' '@currencyCode'}}</td>
+                      <td>
+                        <div class="input-prepend input-append span1 pull-left">
+                          <span class="add-on"><a class="btn btn-mini num_minus">-</a></span>
+                          <input class="span1" id="room-quantity-{{@index}}" name="room-quantity-{{@index}}" value="1" size="16" type="text">
+                          <span class="add-on"><a class="btn btn-mini num_plus">+</a></span>
+                        </div>
+                        <a class="btn btn-mini btn-primary render_order_form" data-room-id="room-quantity-{{@index}}" data-supplier-type="{{supplierType}}" data-rate-key="{{ean .. 'rateKey'}}" data-room-type-code="{{roomTypeCode}}" data-rate-code="{{rateCode}}" data-chargeable-rate="{{RateInfos.RateInfo.ChargeableRateInfo.[@total]}}" data-hotel-id="{{ean .. 'hotelId'}}" data-room-desc="{{roomTypeDescription}}">Book it</a>
+                      </td>
+            </tr>
+                  {{/each}}
+                {{else}}
+                  {{#with value.HotelRoomAvailabilityResponse.HotelRoomResponse}}
+                    <tr>
+                      <td>{{roomTypeDescription}}</td>
+                      <td>{{#if depositRequired}}<i class="icon-ok">+</i>{{else}}<i class="icon-minus">-</i>{{/if}}</td>
+                      <td>{{#if nonRefundable}}<i class="icon-ok">+</i>{{else}}<i class="icon-minus">-</i>{{/if}}</td>
+                      <td>{{#if immediateChargeRequired}}<i class="icon-ok">+</i>{{else}}<i class="icon-minus">-</i>{{/if}}</td>
+                      <td class="price">{{eanPrice RateInfos.RateInfo.ChargeableRateInfo '@nightlyRateTotal' '@currencyCode'}}</td>
+                      <td>{{eanPrice RateInfos.RateInfo.ChargeableRateInfo '@surchargeTotal' '@currencyCode'}}</td>
+                      <td>{{eanPrice RateInfos.RateInfo.ChargeableRateInfo '@total' '@currencyCode'}}</td>
+                      <td>
+                        <div class="input-prepend input-append span1 pull-left">
+                          <span class="add-on"><a class="btn btn-mini num_minus">-</a></span>
+                          <input class="span1" id="room-quantity-{{@index}}" name="room-quantity-0" value="1" size="16" type="text">
+                          <span class="add-on"><a class="btn btn-mini num_plus">+</a></span>
+                        </div>
+                        <a class="btn btn-mini btn-primary render_order_form" data-room-id="room-quantity-0" data-supplier-type="{{supplierType}}" data-rate-key="{{ean .. 'rateKey'}}" data-room-type-code="{{roomTypeCode}}" data-rate-code="{{rateCode}}" data-chargeable-rate="{{RateInfos.RateInfo.ChargeableRateInfo.[@total]}}" data-hotel-id="{{ean .. 'hotelId'}}" data-room-desc="{{roomTypeDescription}}">Book it</a>
+                      </td>
+                    </tr>
+                  {{/with}}
+                {{/if}}
+                </table>
+                {{/if_eq}}
+
+                {{#if_eq key compare='tur'}}
+                <table class="table table-stripped table-condensed table-hover">
+                <thead>
+                  <tr>
+                    <th>Room name</th>
+                    <th>Price [{{value._currency}}]</th>
+                    <th>Tax [{{value._currency}}]</th>
+                    <th>Total [{{value._currency}}]</th>
+                  </tr>
+                </thead>
+                  {{#each value.RoomTypes.RoomType}}
+                    <tr>
+                      <td>{{_name}}</td>
+                      <td>{{turPrice Occupancies.Occupancy.[0] '_occupPrice' '_tax'}}</td>
+                      <td>{{Occupancies.Occupancy.[0]._tax}}</td>
+                      <td class="price">{{Occupancies.Occupancy.[0]._occupPrice}}</td>
+                    </tr>
+                  {{/each}}
+                </table>
+                {{/if_eq}}
+
+              </div>
+            </div>
+
+          </div>
+        {{/eachkeys}}
+        </div>
+
+      </div>
+    </div>
+    <hr>
+    <div class="row-fluid">
+      <div class="span12">
+        {{#images}}
+        <div class="hotel_img span3">
+          <a href="{{url}}" rel="group-{{../hotel_id}}" class="fancybox">
+            <img class="img-rounded" src="{{url}}" >
+          </a>
+          <span class="badge badge-inverse">{{src}}</span>
+        </div>
+        {{/images}}
+      </div>
+    </div>
+  </script>
+
+
+  <script type="text/x-handlebars-template" id="tabHeaderTemplate">
+    <li>
+      <a href="#hoteldetail-{{#if booking}}booking-{{/if}}{{hotel_id}}" data-toggle="tab">{{name}}&nbsp;<button type="button" class="close close_tab" aria-hidden="true">&times;</button>
+      </a>
+    </li>
+  </script>
+
+
+  <script type="text/x-handlebars-template" id="tabBarTemplate">
+    <li class="active"><a href="#hotels" data-toggle="tab">{{title}}</a></li>
+    <li>
+      <a href="#raw-json-hotels" data-toggle="tab">Raw json <b>(all hotels)</b>&nbsp;<button type="button" class="close" aria-hidden="true">&times;</button>
+      </a>
+    </li>
+  </script>
+
+
+  <script type="text/x-handlebars-template" id="filterPanelTemplate">
+    <div data-spy="affix" data-offset-top="270">
+      <form class="form form-inline">
+        <pre id="filter-panel">
+          <span class="help-inline">Show&nbsp;</span>
+          <select id="mapping-filter">
+            <option selected="selected" value="">All hotels</option>
+            <option value="has-mapping">Mapped only</option>
+            <option value="no-mapping">Unmapped only</option>
+          </select>
+          <span>&nbsp;</span>
+          <div class="btn-group" data-toggle="buttons-checkbox">
+            {{#each min_rates}}
+            <label class="btn" for="id_{{this}}_mapping"><input style="display:none;" id="id_{{this}}_mapping" type="checkbox" class="btn source-filter" value="{{this}}-mapping">{{this}}</label>
+            {{/each}}
+          </div>
+        </pre>
+      </form>
+    </fiv>
+  </script>
+
+
+  <script type="text/html" id="alertBlock">
+    <div class="alert alert-{{class}}">
+      <a data-dismiss="alert" class="close">×</a>
+      <strong>{{message}}</strong>
+    </div>
+  </script>
+
+
+  <script type="text/html" id="settingsBlock">
+    <textarea class="span6" cols=4 rows=5  placeholder='format: {"debug":true, "id":12}'id="json-settings" val={{val}}>{{val}}</textarea>
+    <a class="btn" id="save-settings">Save</a>
+  </script>
+
+
+  <script type="text/x-handlebars-template" id="roomTemplate_">
+    <fieldset class="well">
+      <legend>Room details</legend>
+
+      <div class="row-fluid">
+        <div class="span5">
+          <span class="span4 help-inline">First name</span>
+          <input class="input span8" placeholder="enter your first name" type="text" id="user_first_name_{{id}}" name="first_name_{{id}}" value="Jessica">
+        </div>
+        <div class="span5">
+          <span class="span4 help-inline">Last name</span>
+          <input class="input span8" placeholder="enter your last name" type="text" id="user_last_name_{{id}}" name="last_name_{{id}}" value="Simpson">
+        </div>
+      </div>
+
+      <div class="row-fluid">
+        <div class="span2">
+          <div class="input-prepend input-append">
+            <span class="add-on"><a class="btn btn-mini num_minus">-</a></span>
+            <input value="2" size="16" type="text" class="span2" id="num_adults_{{id}}" name="num_adults_{{id}}">
+            <span class="add-on"><a class="btn btn-mini num_plus">+</a></span>
+          </div>
+          <span class="help-inline">Adults</span>
+        </div>
+
+        <div class="span2">
+          <div class="input-prepend input-append">
+            <span class="add-on"><a class="btn btn-mini num_minus">-</a></span>
+            <input value="0" size="16" type="text" class="input span2" id="num_children_{{id}}" name="num_children_{{id}}">
+            <span class="add-on"><a class="btn btn-mini num_plus">+</a></span>
+          </div>
+          <span class="help-inline">Children</span>
+        </div>
+        <div class="span6" id="child_age_{{id}}"></div>
+      </div>
+    </fieldset>
+  </script>
+
+
+  <script type="text/x-handlebars-template" id="roomTemplate">
+  <div class="row room_{{id}}">
+    <h4 class="span2">Room{{id}}</h4>
+      <div class="span3">
+        <span class="help-inline">Adults</span>
+        <div class="input-append input-prepend date help-inline">
+          <span class="add-on"><a class="btn btn-mini num_minus">-</a></span>
+          <input id="num_adults_{{id}}" name="num_adults_{{id}}" value="2" class="span1" size="16" type="text">
+          <span class="add-on"><a class="btn btn-mini num_plus">+</a></span>
+        </div>&nbsp;&nbsp;&nbsp;
+      </div>
+
+      <div class="span3">
+        <span class="help-inline">Children</span>
+        <div class="input-append input-prepend date help-inline">
+          <span class="add-on"><a class="btn btn-mini num_minus">-</a></span>
+          <input data-room-id={{id}} id="num_children_{{id}}" name="num_children_{{id}}" value="0" class="span1" size="16" type="text">
+          <span class="add-on"><a class="btn btn-mini num_plus">+</a></span>
+        </div>&nbsp;&nbsp;&nbsp;
+      </div>
+      <div class="span6" id="child_ages_{{id}}">
+      </div>
+    </div>
+  </script>
+
+
+  <script type="text/x=handlebars-template" id="childAgesTemplate">
+    <span class="help-inline">Children ages</span>&nbsp;
+    {{#each ids}}
+    <input type="text" size=2 class="input span1" id="child_ages_{{../room_id}}_{{this}}" name="child_ages_{{../room_id}}_{{this}}" value=2>
+    {{/each}}
+  </script>
+
+{% endverbatim %}
+
+{% include 'dealangel_debug/_order_form.html' %}
+{% endspaceless %}
